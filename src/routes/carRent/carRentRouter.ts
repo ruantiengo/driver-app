@@ -60,7 +60,7 @@ export const carRentRouter: Router = (() => {
       body: {
         content: {
           "application/json": {
-            schema: CreateCarRentSchema,
+            schema: CreateCarRentSchema.shape.body,
           },
         },
       },
