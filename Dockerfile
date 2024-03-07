@@ -4,11 +4,12 @@ FROM node:current-slim
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-RUN apt-get update -qq && \
-    apt-get install -y python-is-python3 pkg-config build-essential 
-
 # Copy package.json and package-lock.json
 COPY package*.json ./
+
+
+RUN apt-get update -qq && \
+    apt-get install -y python-is-python3 pkg-config build-essential 
 
 # Install app dependencies
 RUN npm ci
