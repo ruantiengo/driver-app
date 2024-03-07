@@ -7,10 +7,11 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm ci
+RUN npm ci --only=production --quiet
 
 # Bundle app source
 COPY . .
+COPY prisma ./prisma/ 
 
 # Build the TypeScript files
 RUN npm run build
