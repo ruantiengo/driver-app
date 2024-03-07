@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
     "prepare": "husky",
-    "release": "release-it"
+    "release": "release-it",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^6.4.0",
