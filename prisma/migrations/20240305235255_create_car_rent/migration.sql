@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "CarRent" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "startDate" DATETIME NOT NULL,
+    "endDate" DATETIME NOT NULL,
+    "carId" INTEGER NOT NULL,
+    "driverId" INTEGER NOT NULL,
+    CONSTRAINT "CarRent_carId_fkey" FOREIGN KEY ("carId") REFERENCES "plate" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "CarRent_driverId_fkey" FOREIGN KEY ("driverId") REFERENCES "Driver" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
