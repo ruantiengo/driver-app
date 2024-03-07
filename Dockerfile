@@ -20,8 +20,8 @@ RUN npm run prisma:generate
 # Build the TypeScript files
 RUN npm run build
 
-# Expose port 8080
-EXPOSE 8080
+# Run tests
+RUN npm run test
 
 # Start the app
 CMD npm run start
