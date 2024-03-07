@@ -11,6 +11,7 @@ import {
 import DriverSchema, {
   CreateDriverSchema,
   GetDriverSchema,
+  UpdateDriverSchema,
 } from "./driverModel";
 import { driverService } from "./driverService";
 
@@ -119,6 +120,24 @@ export const driverRouter: Router = (() => {
     responses: createApiResponse(DriverSchema, "Success"),
   });
 
+  driverRegistry.registerPath({
+    method: "put",
+    path: "/drivers/{id}",
+    tags: ["Driver"],
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: UpdateDriverSchema,
+            example: {
+              name: "John Doe",
+            },
+          },
+        },
+      },
+    },
+    responses: createApiResponse(DriverSchema, "Success"),
+  });
   router.put(
     "/:id",
     validateRequest(CreateDriverSchema),

@@ -19,4 +19,8 @@ export const CreateDriverSchema = z.object({
   body: z.object({ name: z.string() }),
 });
 
+export const UpdateDriverSchema = z.object({
+  body: z.object({ name: z.string() }),
+});
+
 export default DriverSchema;
