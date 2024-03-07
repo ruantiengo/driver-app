@@ -61,6 +61,12 @@ export const carRentRouter: Router = (() => {
         content: {
           "application/json": {
             schema: CreateCarRentSchema.shape.body,
+            example: {
+              carId: 1,
+              driverId: 1,
+              startDate: "2024-03-05 20:12Z",
+              reason: "Vacation",
+            },
           },
         },
       },

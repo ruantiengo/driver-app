@@ -7,6 +7,8 @@ import {
 } from "@/common/models/serviceResponse";
 import { logger } from "@/server";
 
+import { carRepository } from "../car/carRepository";
+import { driverRepository } from "../driver/driverRepository";
 import { carRentRepository } from "./carRentRepository";
 import { CreateCarRentDTO } from "./dto/car-rent-dto";
 
@@ -73,9 +75,26 @@ export const carRentService = {
     carRentDTO: CreateCarRentDTO,
   ): Promise<ServiceResponse<CarRent | null>> => {
     try {
-      console.log(carRentDTO.startDate);
-
       // Check if the car is already in use
+      const carExists = await carRepository.findById(carRentDTO.carId);
+      if (!carExists) {
+        return new ServiceResponse(
+          ResponseStatus.Failed,
+          "Car not found",
+          null,
+          StatusCodes.NOT_FOUND,
+        );
+      }
+      // Check if the driver exists
+      const driverExists = await driverRepository.findById(carRentDTO.driverId);
+      if (!driverExists) {
+        return new ServiceResponse(
+          ResponseStatus.Failed,
+          "Driver not found",
+          null,
+          StatusCodes.NOT_FOUND,
+        );
+      }
       const activeCarRent = await carRentRepository.findActiveByCarId(
         carRentDTO.carId,
       );

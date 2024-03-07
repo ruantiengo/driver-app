@@ -1,12 +1,17 @@
 import { StatusCodes } from "http-status-codes";
 import { Mock } from "vitest";
 
+import { carRepository } from "@/routes/car/carRepository";
+import { driverRepository } from "@/routes/driver/driverRepository";
+
 import { CarRent } from "../carRentModel";
 import { carRentRepository } from "../carRentRepository";
 import { carRentService } from "../carRentService";
 import { CreateCarRentDTO } from "../dto/car-rent-dto";
 
 vi.mock("@/routes/carRent/carRentRepository");
+vi.mock("@/routes/car/carRepository");
+vi.mock("@/routes/driver/driverRepository");
 vi.mock("@/server", () => ({
   ...vi.importActual("@/server"),
   logger: {
@@ -35,6 +40,9 @@ describe("carRentService", () => {
   ];
 
   describe("findAll", () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
     it("return all car rents", async () => {
       (carRentRepository.findAll as Mock).mockReturnValue(mockCarRents);
       const result = await carRentService.findAll();
@@ -138,9 +146,12 @@ describe("carRentService", () => {
         reason: "test",
       };
       const mockCarRent = { id: 1, ...mockCarRentDTO, endDate: null };
+
       (carRentRepository.findActiveByCarId as Mock).mockResolvedValue(null);
       (carRentRepository.findActiveByDriverId as Mock).mockResolvedValue(null);
       (carRentRepository.create as Mock).mockResolvedValue(mockCarRent);
+      mockCar();
+      mockDriver();
 
       const result = await carRentService.create(mockCarRentDTO);
 
@@ -148,6 +159,48 @@ describe("carRentService", () => {
       expect(result.success).toBeTruthy();
       expect(result.message).toContain("Car rent created");
       expect(result.responseObject).toEqual(mockCarRent);
+      expect(carRentRepository.create).toHaveBeenCalledWith(mockCarRentDTO);
+      expect(carRentRepository.create).toBeCalledTimes(1);
+    });
+
+    it("should return error when a car doesn't exist", async () => {
+      const mockCarRentDTO: CreateCarRentDTO = {
+        carId: 1,
+        driverId: 1,
+        startDate: new Date(),
+        reason: "test",
+      };
+      (carRepository.findById as Mock).mockResolvedValue(null);
+      mockDriver();
+
+      const result = await carRentService.create(mockCarRentDTO);
+
+      expect(result.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(result.success).toBeFalsy();
+      expect(result.message).toContain("Car not found");
+      expect(result.responseObject).toBeNull();
+      expect(carRepository.findById).toHaveBeenCalledWith(mockCarRentDTO.carId);
+    });
+
+    it("should return error when a driver doesn't exist", async () => {
+      const mockCarRentDTO: CreateCarRentDTO = {
+        carId: 1,
+        driverId: 1,
+        startDate: new Date(),
+        reason: "test",
+      };
+      mockCar();
+      (driverRepository.findById as Mock).mockResolvedValue(null);
+
+      const result = await carRentService.create(mockCarRentDTO);
+
+      expect(result.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(result.success).toBeFalsy();
+      expect(result.message).toContain("Driver not found");
+      expect(result.responseObject).toBeNull();
+      expect(driverRepository.findById).toHaveBeenCalledWith(
+        mockCarRentDTO.driverId,
+      );
     });
 
     it("should return error when a car is already rented", async () => {
@@ -157,6 +210,8 @@ describe("carRentService", () => {
         startDate: new Date(),
         reason: "test",
       };
+      mockCar();
+      mockDriver();
       const mockCarRent = { id: 1, ...mockCarRentDTO, endDate: null };
       (carRentRepository.findActiveByCarId as Mock).mockResolvedValue(
         mockCarRent,
@@ -178,6 +233,8 @@ describe("carRentService", () => {
         reason: "test",
       };
       const mockCarRent = { id: 1, ...mockCarRentDTO, endDate: null };
+      mockCar();
+      mockDriver();
       (carRentRepository.findActiveByDriverId as Mock).mockResolvedValue(
         mockCarRent,
       );
@@ -200,7 +257,8 @@ describe("carRentService", () => {
       (carRentRepository.findActiveByCarId as Mock).mockResolvedValue(null);
       (carRentRepository.findActiveByDriverId as Mock).mockResolvedValue(null);
       (carRentRepository.create as Mock).mockRejectedValue(mockError);
-
+      mockCar();
+      mockDriver();
       const result = await carRentService.create(mockCarRentDTO);
 
       expect(result.statusCode).toEqual(StatusCodes.INTERNAL_SERVER_ERROR);
@@ -264,3 +322,19 @@ describe("carRentService", () => {
   });
   // Add similar tests for findById, delete, create, and finishRent here
 });
+
+const mockCar = () => {
+  (carRepository.findById as Mock).mockResolvedValue({
+    id: 1,
+    brand: "",
+    color: "",
+    plate: "",
+  });
+};
+
+const mockDriver = () => {
+  (driverRepository.findById as Mock).mockResolvedValue({
+    id: 1,
+    name: "",
+  });
+};
