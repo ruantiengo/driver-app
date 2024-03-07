@@ -18,5 +18,8 @@ RUN npm run build
 # Expose port 8080
 EXPOSE 8080
 
+# Start prisma
+RUN npm run prisma generate
+
 # Start the app
 CMD npm run start
