@@ -10,6 +10,7 @@ import {
 import {
   CarSchema,
   CreateCarSchema,
+  FilterCarSchema,
   GetCarSchema,
   UpdateCarSchema,
 } from "./carModel";
@@ -19,6 +20,9 @@ export const carRegistry = new OpenAPIRegistry();
 
 carRegistry.register("car", CarSchema);
 
+/**
+ * Express router for handling car routes.
+ */
 export const carRouter: Router = (() => {
   const router = express.Router();
 
@@ -127,6 +131,10 @@ export const carRouter: Router = (() => {
     method: "get",
     path: "/cars",
     tags: ["Car"],
+    request: {
+      query: FilterCarSchema.shape.query,
+    },
+
     responses: createApiResponse(CarSchema, "Success"),
   });
 

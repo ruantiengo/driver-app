@@ -30,7 +30,7 @@ export const UpdateCarSchema = z.object({
 });
 
 export const FilterCarSchema = z.object({
-  params: z.object({
+  query: z.object({
     color: z.string().nullable(),
     brand: z.string().nullable(),
   }),
