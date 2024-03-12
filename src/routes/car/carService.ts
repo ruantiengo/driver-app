@@ -84,6 +84,7 @@ export const carService = {
           null,
           StatusCodes.BAD_REQUEST,
         );
+
       const car = await carRepository.create(carDTO);
 
       return new ServiceResponse<Car>(

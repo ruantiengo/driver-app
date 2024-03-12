@@ -34,7 +34,7 @@ export const carRepository = {
       data: {
         ...newCarDTO,
         color: newCarDTO.color.toLowerCase(),
-        brand: newCarDTO.color.toLocaleLowerCase(),
+        brand: newCarDTO.brand.toLocaleLowerCase(),
       },
     });
   },
